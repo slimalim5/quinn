@@ -1,109 +1,97 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# quinn
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+quinn plans concrete and asphalt slabs for contractors. Type an address, drag a box over a parking lot or slab on a satellite map, and press Generate. The app outlines the surface, subtracts buildings and islands, and reports net square footage. For concrete it also lays out control joints. Built for the Supabase Select 2026 hackathon (2026-10-03).
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+- Live demo: PLACEHOLDER, to be filled at submission
+- Screenshots: PLACEHOLDER, to be filled at submission
 
-## Features
+## Status
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Proxy
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+The scaffold is in place: the Next.js and Supabase starter, dependencies, and CI. The product features are being built during the hackathon and land today. This README describes what the app does when built, and will be updated at submission.
 
-## Demo
+## What it does
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+1. A contractor types an address. The map flies there and drops a default box.
+2. They scale or move the box to cover a parking lot or slab.
+3. They press Generate. Claude vision outlines the paved surface and the obstacles inside it (buildings, landscape islands). The app reports net square footage: surface minus obstacles.
+4. For concrete, a deterministic engine also lays out control joints and reports cut footage and rule warnings.
+5. Every edit recalculates the numbers live in the browser: move the boundary, delete an obstacle, slide, add or delete a joint.
+6. An estimate can be turned into a deposit through Stripe Checkout (test mode).
 
-## Deploy to Vercel
+Design rules: Claude only detects outlines; it never draws joints. The joint layout is deterministic code. Joint rules produce warnings, not engineering approval.
 
-Vercel deployment will guide you through creating a Supabase account and project.
+## Stack
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+- Next.js (App Router) and TypeScript
+- Tailwind and shadcn/ui
+- Supabase: Postgres with the OrioleDB storage engine (public beta), PostGIS, Auth, declarative schemas in `supabase/schemas/`
+- Mapbox GL and Turf
+- Vercel AI SDK calling Claude, through Vercel AI Gateway or the Anthropic API directly
+- Stripe Checkout
+- Vitest
+- Hosted on Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+Started from Vercel's `with-supabase` Next.js example.
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+## Sponsor technology
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+Locations are planned and may change as features land.
 
-## Clone and run locally
+| Sponsor   | Use                                                      | Planned location                     |
+| --------- | -------------------------------------------------------- | ------------------------------------ |
+| Supabase  | Postgres on OrioleDB, PostGIS, Auth, declarative schemas | `supabase/schemas/`, `lib/plans.ts`  |
+| Vercel    | Hosting, AI SDK and AI Gateway                           | `app/api/analyze/`, hosting          |
+| Anthropic | Claude vision detection of surface and obstacles         | `lib/ai/`                            |
+| Stripe    | Deposit through Checkout (test mode)                     | `app/api/checkout/`, `lib/stripe.ts` |
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+## Run it locally
 
-2. Create a Next.js app using the Supabase Starter template npx command
+Requires Node 22 (the version CI uses).
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+```bash
+git clone https://github.com/slimalim5/quinn.git
+cd quinn
+npm install
+cp .env.example .env.local   # then fill in the values
+npm run dev
+```
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+Open http://localhost:3000.
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+## Environment variables
 
-3. Use `cd` to change into the app's directory
+All go in `.env.local`, copied from `.env.example`. Never commit real keys.
 
-   ```bash
-   cd with-supabase-app
-   ```
+| Variable                               | Required             | Where to get it                                                      | Without it                                                                    |
+| -------------------------------------- | -------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Required             | Supabase dashboard, project settings, API                            | Supabase features and sign-in fail                                            |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Required             | Supabase dashboard, project settings, API                            | Supabase features and sign-in fail                                            |
+| `NEXT_PUBLIC_MAPBOX_TOKEN`             | Required for the map | Mapbox account, public token (map tiles and static satellite images) | The map shows a message instead                                               |
+| `AI_GATEWAY_API_KEY`                   | Optional, preferred  | Vercel dashboard, AI Gateway, API keys                               | Falls back to `ANTHROPIC_API_KEY`                                             |
+| `ANTHROPIC_API_KEY`                    | Optional fallback    | Anthropic Console                                                    | With neither AI key, no detection runs and the box itself is used as the slab |
+| `STRIPE_SECRET_KEY`                    | Optional             | Stripe dashboard, test mode                                          | The estimate shows and the deposit button is disabled                         |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`   | Optional             | Stripe dashboard, test mode                                          | The estimate shows and the deposit button is disabled                         |
 
-4. Rename `.env.example` to `.env.local` and update the following:
+## Commands
 
-  ```env
-  NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[INSERT SUPABASE PROJECT API PUBLISHABLE OR ANON KEY]
-  ```
-  > [!NOTE]
-  > This example uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, which refers to Supabase's new **publishable** key format.
-  > Both legacy **anon** keys and new **publishable** keys can be used with this variable name during the transition period. Supabase's dashboard may show `NEXT_PUBLIC_SUPABASE_ANON_KEY`; its value can be used in this example.
-  > See the [full announcement](https://github.com/orgs/supabase/discussions/29260) for more information.
+| Command             | Purpose                   |
+| ------------------- | ------------------------- |
+| `npm run dev`       | Start the dev server      |
+| `npm run build`     | Production build          |
+| `npm run lint`      | ESLint                    |
+| `npm run typecheck` | TypeScript check          |
+| `npm run test:run`  | Run the Vitest suite once |
 
-  Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+The Supabase CLI is a dev dependency. Use `npx supabase ...`, not a global install.
 
-5. You can now run the Next.js local development server:
+## Project layout
 
-   ```bash
-   npm run dev
-   ```
+Planned layout; some paths do not exist yet.
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
-
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
-
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
-
-## Feedback and issues
-
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
-
-## More Supabase examples
-
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+| Path                          | Contents                          |
+| ----------------------------- | --------------------------------- |
+| `lib/geometry/`               | Pure joint engine, unit-tested    |
+| `components/map/`             | Map and editing                   |
+| `lib/ai/`, `app/api/analyze/` | Claude detection                  |
+| `supabase/schemas/`           | Database schema                   |
+| `app/plan/`                   | The public page, works signed out |
